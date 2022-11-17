@@ -3,6 +3,8 @@ import re
 
 __all__ = ["Command", "get_cmd", "cmd_register", "cmd_compile"]
 
+ESCAPE = '\a'
+
 
 commands = {}
 
@@ -130,10 +132,11 @@ def cmd_compile(string: str) -> list:
 	</key> -> end-command
 	<!key> -> nothing(comment)
 	"""
-	ptn = re.compile(r"((?<![^\\]\\)<.*?(?<![^\\]\\)>)", re.DOTALL)
+	ptn = re.compile(r"((?<!\\)<.*?[^\\]>)", re.DOTALL)
 	result = []
-	for text in ptn.split(string):
+	for text in ptn.split(string.replace("\\\\", ESCAPE)):
 		if text:
+			text = text.replace(ESCAPE, "\\")
 			if ptn.fullmatch(text):
 				if text[1] != '!':
 					cmd = cmd_fromtext(text)
