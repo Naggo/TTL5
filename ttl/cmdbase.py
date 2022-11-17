@@ -96,7 +96,7 @@ def _make_cmd(cmd: Command, args: str):
 	"""
 	try:
 		return eval("_cmd({})".format(args), {"__builtins__": {}}, {"_cmd": cmd})
-	except NameError:
+	except (NameError, SyntaxError):
 		return cmd(args.strip())
 
 
